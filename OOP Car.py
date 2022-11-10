@@ -2,6 +2,7 @@ marka_spisok = []
 dvig_spisok = []
 shin_spisok = []
 color_spisok = []
+tonirowka_spisok = []
 dveri_far_spisok = []
 
 file_sohr = open('sohr', encoding='utf-8')
@@ -14,14 +15,16 @@ if len(file_sohr) != 0:
     file_sohr1 = (file_sohr[1])[:-1].split(',')
     file_sohr2 = (file_sohr[2])[:-1].split(',')
     file_sohr3 = (file_sohr[3])[:-1].split(',')
-    file_sohr4 = (file_sohr[4:])[:-1]
+    file_sohr4 = (file_sohr[4])[:-1].split(',')
+    file_sohr5 = (file_sohr[5:])[:-1]
 
     for i in range(len(file_sohr0)):
         marka_spisok.append(file_sohr0[i])
         dvig_spisok.append(file_sohr1[i])
         shin_spisok.append(file_sohr2[i])
         color_spisok.append(file_sohr3[i])
-    dveri_far_spisok = file_sohr4
+        tonirowka_spisok.append(file_sohr4[i])
+    dveri_far_spisok = file_sohr5
 
 file = open('name', encoding='utf-8')
 file = file.read().split('\n')
@@ -29,6 +32,7 @@ file_mark = file[0].split(',')
 file_dvig = file[1].split(',')
 file_shin = file[2].split(',')
 file_color = file[3].split(',')
+file_tonirowka = file[4].split(',')
 
 class Sozdanie_car:
     haracter = []
@@ -98,6 +102,21 @@ class Sozdanie_car:
         self.haracter.append(file_color[a - 1])
         return ''
 
+    def toniriwka_sozd(self):
+        print("Выберите тонировку")
+        print("0. Назад")
+        print(file_tonirowka)
+        for i in range(len(file_tonirowka)):
+            print(str(i + 1) + ')', file_tonirowka[i])
+        a = int(input())
+        while (len(file_tonirowka) < a) or (a < 0):
+            print("Вы ввели некорректные данные")
+            a = int(input())
+        if a == 0:
+             Menu().menu()
+        self.haracter.append(file_tonirowka[a - 1])
+        return ''
+
 class Prosmotr_car(Sozdanie_car):
     def prosmotr_car(self):
         j = 0
@@ -121,6 +140,7 @@ class Prosmotr_car(Sozdanie_car):
             print('Двигатель:', dvig_spisok[a - 1])
             print('Шины:', shin_spisok[a - 1])
             print('Цвет:', color_spisok[a - 1])
+            print('Тонировка:', tonirowka_spisok[a - 1])
             print('Дверь справа спереди:', dveri_far_spisok[0 + (a - 1) * 6])
             print('Дверь слева спереди:', dveri_far_spisok[1 + (a - 1) * 6])
             print('Дверь слева сзади:', dveri_far_spisok[2 + (a - 1) * 6])
@@ -139,10 +159,11 @@ class Prosmotr_car(Sozdanie_car):
                 print(" 2. Изменить двигатель")
                 print(" 3. Изменнить шины")
                 print(" 4. Изменить цвет")
-                print(" 5. Открыть/закрыть двери")
-                print(" 6. Вкл./выкл. фыры ")
+                print(" 5. Изменить тонировку")
+                print(" 6. Открыть/закрыть двери")
+                print(" 7. Вкл./выкл. фыры ")
                 a1 = int(input())
-                while a1 < 0 or a1 > 6:
+                while a1 < 0 or a1 > 7:
                     print("Вы ввели некорректные данные")
                     a1 = int(input())
                 if a1 == 0:
@@ -184,6 +205,15 @@ class Prosmotr_car(Sozdanie_car):
                     Prosmotr_car().prosmotr_car()
 
                 elif a1 == 5:
+                    Sozdanie_car().toniriwka_sozd()
+                    tonirowka_spisok[a-1] = self.haracter[-1]
+                    self.haracter.clear()
+                    print("Вы изменили тонировку")
+                    print("Для продолжения введите любую клавишу")
+                    a = input()
+                    Prosmotr_car().prosmotr_car()
+
+                elif a1 == 6:
                     print("Выберите дверь")
                     print("0. Вернуться к списку созданных автомобилей")
                     print(" 1. Справа спереди")
@@ -209,7 +239,7 @@ class Prosmotr_car(Sozdanie_car):
                         a5 = input()
                         Prosmotr_car().prosmotr_car()
 
-                elif a1 == 6:
+                elif a1 == 7:
                     print("Выберите фары")
                     print("0. Вернуться к списку созданных автомобилей")
                     print(" 1. Передние фары")
@@ -255,6 +285,7 @@ class Delete():
         dvig_spisok.pop(a - 1)
         shin_spisok.pop(a - 1)
         color_spisok.pop(a - 1)
+        tonirowka_spisok.pop(a - 1)
         del dveri_far_spisok[0 + (a - 1) * 6:6 + (a - 1) * 6]
         print("Вы удалили автомобиль")
         print("Для продолжения введите любую клавишу")
@@ -290,23 +321,29 @@ class Sohranenie:
                 file_sohr.write(i + ',')
             file_sohr.write(';')
 
+            for i in tonirowka_spisok:
+                file_sohr.write(i + ',')
+            file_sohr.write(';')
+
             for i in dveri_far_spisok:
                 file_sohr.write(i+';')
             file_sohr.close()
         return ''
 
 class Car():
-    def __init__(self, m, d, s, c):
+    def __init__(self, m, d, s, c, t):
         self.marka = m
         self.dvig = d
         self.shin = s
         self.color = c
+        self.tonirowka = t
 
     def car_dobavlenie(self):
         marka_spisok.append(self.marka)
         dvig_spisok.append(self.dvig)
         shin_spisok.append(self.shin)
         color_spisok.append(self.color)
+        tonirowka_spisok.append(self.tonirowka)
         return ''
 
 class Menu(Sozdanie_car,Sohranenie,Delete):
@@ -315,6 +352,7 @@ class Menu(Sozdanie_car,Sohranenie,Delete):
         print(dvig_spisok)  #
         print(shin_spisok)  #
         print(color_spisok) #
+        print(tonirowka_spisok)
         print(dveri_far_spisok)
         print("1. Просмотр списка и редактирование созданных автомобилей")
         print("2. Создать автомобиль")
@@ -331,7 +369,8 @@ class Menu(Sozdanie_car,Sohranenie,Delete):
             print(Sozdanie_car().dvig_sozd())
             print(Sozdanie_car().shin_sozd())
             print(Sozdanie_car().color_sozd())
-            print(Car(Sozdanie_car().haracter[0], Sozdanie_car().haracter[1], Sozdanie_car().haracter[2],Sozdanie_car().haracter[3]).car_dobavlenie())
+            print(Sozdanie_car().toniriwka_sozd())
+            print(Car(Sozdanie_car().haracter[0], Sozdanie_car().haracter[1], Sozdanie_car().haracter[2],Sozdanie_car().haracter[3],Sozdanie_car().haracter[4]).car_dobavlenie())
             self.haracter.clear()
             dveri_far = ["close", "close", "close", "close", "off", "off"]
             for i in dveri_far:
